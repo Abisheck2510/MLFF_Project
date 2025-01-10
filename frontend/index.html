@@ -1,13 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MLFF Data Table</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Enhanced Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            color: #cbd5e1;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Table Container for Responsiveness */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1e293b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            table-layout: auto;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+            border-right: 1px solid #334155;
+            color: #e2e8f0;
+        }
+
+        th {
+            background-color: #1a2332;
+            font-weight: 600;
+            color: #f1f5f9;
+            letter-spacing: 0.5px;
+        }
+
+        td img {
+            max-width: 100px;
+            max-height: 120px;
+            cursor: zoom-in;
+            border-radius: 5px;
+        }
+
+        tr:hover {
+            background-color: #243248;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Filters Styling */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .filters input {
+            padding: 12px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background-color: #1e293b;
+            color: #e2e8f0;
+            min-width: 150px;
+            flex: 1;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .filters input:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 5px rgba(100, 116, 139, 0.5);
+        }
+
+        /* Styling for datetime-local input */
+        input[type="datetime-local"] {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            width: 300px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Placeholder styling */
+        input[type="datetime-local"]::placeholder {
+            color: #94a3b8;
+            /* Dim color for placeholder */
+            font-style: italic;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        /* Focus effect */
+        input[type="datetime-local"]:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 8px rgba(100, 116, 139, 0.6);
+            /* Outer glow effect */
+        }
+
+        /* Calendar icon customization */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            /* Invert icon color for dark mode */
+            cursor: pointer;
+            /* Indicate interactivity */
+            padding: 0 5px;
+            /* Add spacing for neat alignment */
+        }
+
+        /* .compare-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #e2e8f0;
+            color: #1e293b;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            outline: none;
+        }
+
+        .compare-button:hover {
+            background-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .compare-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .compare-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #94a3b8, 0 4px 8px rgba(0, 0, 0, 0.2);
+        } */
+
+        .toggle-button {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            background-color: #4a5568;
+            border-radius: 34px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            transition: left 0.3s ease;
+            /* Changed transform to left */
+        }
+
+        .toggle-button.on {
+            background-color: #58d68d;
+        }
+
+        .toggle-button.on .toggle-slider {
+            left: 28px;
+            /* Changed transform to left with desired position */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            input[type="datetime-local"] {
+                width: 90%;
+                /* Adjust width for small screens */
+            }
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filters input {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>HI HELLO</h1>
+    <h1>MLFF Data Table</h1>
+
+    <!-- Filters -->
+    <div class="filters">
+        <input type="text" id="search-id" placeholder="Search by ANPR ID">
+        <input type="text" id="search-fastag-id" placeholder="Search by Fastag ID">
+        <input type="datetime-local" id="search-datetime" placeholder="dd-mm-yyyy --:--:--" step="1">
+        <input type="text" id="search-lane" placeholder="Search by Lane/Camera ID">
+        <input type="text" id="search-vehicle" placeholder="Search by Vehicle Name">
+        <input type="text" id="search-status" placeholder="Search by status">
+        <!-- <button class="compare-button" id="compare-plates-btn">Compare Plates</button> -->
+        <button class="toggle-button" id="compare-plates-btn">
+            <span class="toggle-slider"></span>
+        </button>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <table id="data-table">
+            <thead>
+                <tr id="header">
+                    <th>ANPR ID</th>
+                    <th>Fastag ID</th>
+                    <th>Date Time</th>
+                    <th>Lane/Camera ID</th>
+                    <th>Colour</th>
+                    <th>Vehicle Name</th>
+                    <th>Vehicle Image</th>
+                    <th>Number Plate Image</th>
+                    <th>OCR</th>
+                    <th>VRN</th>
+                </tr>
+            </thead>
+            <tbody id="entries">
+                
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/static/app.js"></script>
 </body>
+
 </html>

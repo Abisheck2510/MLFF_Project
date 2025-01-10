@@ -6,6 +6,6 @@ def get_connection():
         host = "localhost",
         user = "postgres",
         password = "root",
-        database = "MLFF_Database"
+        database = "MLFF_Database",
     )
     return connection
